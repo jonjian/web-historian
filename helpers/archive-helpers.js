@@ -26,6 +26,9 @@ exports.initialize = function(pathsObj) {
 // modularize your code. Keep it clean!
 
 exports.readListOfUrls = function(callback) {
+  fs.readFile(exports.paths.list, (err, data) => { 
+    callback(data.toString().split('\n'));
+  });
 };
 
 /*
@@ -35,7 +38,6 @@ exports.readListOfUrls = function(callback) {
 exports.isUrlInList = function(url, callback) {
   var pathToSitesFile = path.join(__dirname, '../archives') + '/' + url;
   fs.readFile(pathToSiteFile, function(err, data) {
-    console.log(data);
   });
 };
 

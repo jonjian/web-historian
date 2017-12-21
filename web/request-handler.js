@@ -30,7 +30,6 @@ exports.handleRequest = function (req, res) {
     }
   }
   if (req.method === 'POST') {
-    console.log(myUrl);
     var body = [];
     req.on('data', (chunks) => {
       body.push(chunks);
@@ -40,7 +39,6 @@ exports.handleRequest = function (req, res) {
       fs.open(archive.paths.list, 'a', (err, fd) => {
         fs.write(fd, body + '\n', (err, written, string) => {
           fs.close(fd, () => {
-            console.log('Write successful!');
             res.writeHead(302, {'Content-Type': 'text/html'});
             res.end();
           });
