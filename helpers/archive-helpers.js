@@ -38,31 +38,15 @@ exports.isUrlInList = function(url, callback) {
 };
 
 exports.addUrlToList = function(url, callback) {
-  // fs.open(exports.paths.list, 'a', (err, fd) => {
-  //   callback(url);
-  //   fs.close(fd, (err) => {
-  //     if (err) {
-  //       console.log('addurltolist: Error');
-  //     }
-  //     console.log('Success');
-  //   });
-  // });
-  exports.isUrlInList(url, (exist) => {
-    if (!exist) {
-      // fs.appendFile(file, data[, options], callback)
-      // file accepts string filename OR file descriptor (fs.open to get fd)
-      fs.open(exports.paths.list, 'a', (err, fd) => {
-        fs.write(fd, url + '\n', (err, written, string) => {
-          fs.close(fd, (err) => {
-            if (err) {
-              console.log('addurltolist: Error');
-            }
-            console.log('Success');
-            callback();
-          });
-        });
+  fs.open(exports.paths.list, 'a', (err, fd) => {
+    fs.write(fd, url + '\n', (err, written, string) => {
+      fs.close(fd, (err) => {
+        if (err) {
+          console.log('addurltolist: Error');
+        }
+        callback();
       });
-    }
+    });
   });
 };
 
@@ -79,6 +63,7 @@ exports.isUrlArchived = function(url, callback) {
 exports.downloadUrls = function(urls) {
   urls.forEach((url) => {
     // require request module, then use get method to grab HTML src, then pass it into writeFile 2nd arg
+    // TODO: change 'Hello Node.js'
     fs.writeFile(exports.paths.archivedSites + '/' + url, 'Hello Node.js', (err) => {
       if (err) {
         console.log(err);

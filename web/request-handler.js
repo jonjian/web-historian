@@ -14,6 +14,16 @@ exports.handleRequest = function (req, res) {
         res.write(data);
         res.end();
       });
+    } else {
+      serveAssets(res, archive.paths.archivedSites + myUrl.path, (data) => {
+        if (data !== undefined) {
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.write(data);
+        } else {
+          res.writeHead(404, {'Content-Type': 'text/html'});
+        }
+        res.end();
+      });
     }
   } else if (req.method === 'POST') {
     var body = [];
@@ -24,24 +34,28 @@ exports.handleRequest = function (req, res) {
 
     req.on('end', () => {
       body = Buffer.concat(body).toString().slice(4);
-      serveAssets(res, archive.paths.archivedSites + '/' + body, (data) => {
-        if (data !== undefined) {
-          //serve assets if data (html) is found
-          res.writeHead(200, {'Content-Type': 'text/html'});
-          res.write(data);
-          res.end();
-        } else { 
-          // server loading.html asset if not found
-          serveAssets(res, __dirname + '/public/loading.html', (data) => {
-            //write url into sites.text
-            console.log(body);
-            //cron will do the work in x minutes later
-            res.writeHead(404, {'Content-Type': 'text/html'});
-            res.write(data);
-            res.end();
-          });
-        }
-      });
+      archive.addUrlToList(body, () => {});
+      res.writeHead(302, {'Content-Type': 'text/html'});
+      res.end();
+      // serveAssets(res, archive.paths.archivedSites + '/' + body, (data) => {
+      //   if (data !== undefined) {
+      //     //serve assets if data (html) is found
+      //     console.log(data.toString());
+      //     res.writeHead(200, {'Content-Type': 'text/html'});
+      //     res.write(data);
+      //     res.end();
+      //   } else { 
+      //     // server loading.html asset if not found
+      //     serveAssets(res, __dirname + '/public/loading.html', (data) => {
+      //       //write url into sites.text
+      //       // exports.addUrlToList(????, cb)
+      //       //cron will do the work in x minutes later
+      //       res.writeHead(302, {'Content-Type': 'text/html'});
+      //       res.write(data);
+      //       res.end();
+      //     });
+      //   }
+      // });
     });
   }
 };
