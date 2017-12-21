@@ -28,7 +28,15 @@ exports.initialize = function(pathsObj) {
 exports.readListOfUrls = function(callback) {
 };
 
+/*
+  @ 1st params: url (what does the url look like?)
+  @ 2nd params: callback (what)
+*/
 exports.isUrlInList = function(url, callback) {
+  var pathToSitesFile = path.join(__dirname, '../archives') + '/' + url;
+  fs.readFile(pathToSiteFile, function(err, data) {
+    console.log(data);
+  });
 };
 
 exports.addUrlToList = function(url, callback) {
