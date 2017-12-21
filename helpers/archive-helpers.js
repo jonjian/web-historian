@@ -12,7 +12,7 @@ var _ = require('underscore');
 exports.paths = {
   siteAssets: path.join(__dirname, '../web/public'),
   archivedSites: path.join(__dirname, '../archives/sites'),
-  list: path.join(__dirname, '../archives/sites.txt')
+  list: path.join(__dirname, '../archives/sites.txt'),
 };
 
 // Used for stubbing paths for tests, do not modify
@@ -49,6 +49,8 @@ exports.addUrlToList = function(url, callback) {
   // });
   exports.isUrlInList(url, (exist) => {
     if (!exist) {
+      // fs.appendFile(file, data[, options], callback)
+      // file accepts string filename OR file descriptor (fs.open to get fd)
       fs.open(exports.paths.list, 'a', (err, fd) => {
         fs.write(fd, url + '\n', (err, written, string) => {
           fs.close(fd, (err) => {
@@ -75,4 +77,26 @@ exports.isUrlArchived = function(url, callback) {
 };
 
 exports.downloadUrls = function(urls) {
+  urls.forEach((url) => {
+    // require request module, then use get method to grab HTML src, then pass it into writeFile 2nd arg
+    fs.writeFile(exports.paths.archivedSites + '/' + url, 'Hello Node.js', (err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+  });
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+

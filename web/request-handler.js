@@ -15,11 +15,30 @@ exports.handleRequest = function (req, res) {
         res.end();
       });
     } else {
-      // if site doesn't exist in file
+      // if site doesn't exist in file, add it to web/sites.txt
+        // and load "loading.html"
+      // if site exist in web/archives, load the .html
       // post to file
-      // and load "loading.html"
       serveAssets(res, archive.paths.archivedSites + myUrl.path, (data) => {
-        
+        if (data !== undefined) {
+        //serve assets
+          res.writeHead(200, {'Content-Type': 'text/html'});
+          res.write(data);
+          res.end();
+          //render the html from archives/sites folder
+
+        } else { 
+          // console.log(archive.paths.siteAssets);
+          serveAssets(res, __dirname + '/public/loading.html', (data) => {
+            //render loading.html page
+            //write url into sites.text
+            //cron will do the work in x minutes later
+            res.writeHead(404, {'Content-Type': 'text/html'});
+            res.write(data);
+            res.end();
+            // add it to the urlList `exports.paths.list`
+          });
+        }
       });
      
     }
