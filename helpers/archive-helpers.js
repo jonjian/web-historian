@@ -31,20 +31,47 @@ exports.readListOfUrls = function(callback) {
   });
 };
 
-/*
-  @ 1st params: url (what does the url look like?)
-  @ 2nd params: callback (what)
-*/
 exports.isUrlInList = function(url, callback) {
-  var pathToSitesFile = path.join(__dirname, '../archives') + '/' + url;
-  fs.readFile(pathToSiteFile, function(err, data) {
+  exports.readListOfUrls((data) => {
+    callback(data.includes(url));
   });
 };
 
 exports.addUrlToList = function(url, callback) {
+  // fs.open(exports.paths.list, 'a', (err, fd) => {
+  //   callback(url);
+  //   fs.close(fd, (err) => {
+  //     if (err) {
+  //       console.log('addurltolist: Error');
+  //     }
+  //     console.log('Success');
+  //   });
+  // });
+  exports.isUrlInList(url, (exist) => {
+    if (!exist) {
+      fs.open(exports.paths.list, 'a', (err, fd) => {
+        fs.write(fd, url + '\n', (err, written, string) => {
+          fs.close(fd, (err) => {
+            if (err) {
+              console.log('addurltolist: Error');
+            }
+            console.log('Success');
+            callback();
+          });
+        });
+      });
+    }
+  });
 };
 
 exports.isUrlArchived = function(url, callback) {
+  fs.readFile(exports.paths.archivedSites + '/' + url, (err, data) => {
+    if (err) {
+      callback(false);
+    } else {
+      callback(true);
+    }
+  });
 };
 
 exports.downloadUrls = function(urls) {

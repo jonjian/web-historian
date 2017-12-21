@@ -15,18 +15,13 @@ exports.handleRequest = function (req, res) {
         res.end();
       });
     } else {
-      serveAssets(res, __dirname + '/archives/sites' + myUrl.path);
-      // console(myUrl);
-      // console.log(myUrl.path);
-      // path.isUrlInList()
-      // fs.readFile('../archives' + myUrl.path, function (err, data) {
-      //   if (err) {
-      //     throw err;
-      //   }
-      //   res.writeHead(200, {'Content-Type': 'text/html'});
-      //   res.write(data);
-      //   res.end(archive.paths.list);
-      // });
+      // if site doesn't exist in file
+      // post to file
+      // and load "loading.html"
+      serveAssets(res, archive.paths.archivedSites + myUrl.path, (data) => {
+        
+      });
+     
     }
   }
   if (req.method === 'POST') {
