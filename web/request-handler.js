@@ -36,28 +36,28 @@ exports.handleRequest = function (req, res) {
       body.push(chunks);
     });
 
-    // var callbackIfArchived = null;
     req.on('end', () => {
       body = Buffer.concat(body).toString().slice(4);
       archive.isUrlInList(body, (exists) => {
         if (!exists) {
           archive.addUrlToList(body, () => {});
+          serveAssets(res, __dirname + '/public/loading.html', (data) => {
+            res.writeHead(302, {'Content-Type': 'text/html'});
+            res.write(data);
+            res.end();
+          });
+        } else {
+          archive.isUrlArchived(body, (exists) => {
+            if (exists) {
+              console.log(archive.paths.archivedSites + '/', 'yoo');
+              serveAssets(res, archive.paths.archivedSites + '/' + body, (data) => {
+                res.writeHead(200, {'Content-Type': 'text/html'});
+                res.write(data);
+                res.end();
+              });
+            }
+          });
         } 
-        // callbackIfArchived = archive.isUrlArchived(body, (exists) => {
-        //   if (exists) {
-        //     serveAssets(res, archive.archivedSites + '/' + body, (data) => {
-        //       res.writeHead(200, {'Content-Type': 'text/html'});
-        //       res.write(data);
-        //       res.end();
-        //     });
-        //   }
-        // });
-      });
-
-      serveAssets(res, __dirname + '/public/loading.html', (data) => {
-        res.writeHead(302, {'Content-Type': 'text/html'});
-        res.write(data);
-        res.end(callbackIfArchived);
       });
     });
   }
