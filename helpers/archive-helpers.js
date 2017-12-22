@@ -1,6 +1,8 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var http = require('http');
+var request = require('request');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -62,11 +64,18 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
   urls.forEach((url) => {
-    // require request module, then use get method to grab HTML src, then pass it into writeFile 2nd arg
-    // TODO: change 'Hello Node.js'
-    fs.writeFile(exports.paths.archivedSites + '/' + url, 'Hello Node.js', (err) => {
-      if (err) {
-        console.log(err);
+    if (!url.length) {
+      return;
+    }
+    exports.isUrlArchived(url, (exists) => {
+      if (!exists) {
+        request('http://' + url, (error, response, body) => {
+          fs.writeFile(exports.paths.archivedSites + '/' + url, body, (error) => {
+            if (error) {
+              console.log(error, 'error');
+            }
+          });
+        });
       }
     });
   });
